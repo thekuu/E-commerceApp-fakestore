@@ -204,13 +204,13 @@ export default function App() {
           >
             LinkedIn
           </a>
-          <a
+          {/*<a
             href="https://twitter.com/yourusername"
             target="_blank"
             rel="noopener noreferrer"
           >
             Twitter
-          </a>
+      </a>*/}
         </div>
       </footer>
     </div>

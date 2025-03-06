@@ -1,19 +1,33 @@
-import "./styles.css";
 import React, { useState, useEffect } from "react";
+import mockAuth from "./mockAuth";
+import Auth from "./Auth";
+import SearchBar from "./SearchBar";
+import CategoryFilters from "./CategoryFilters";
+import About from "./About";
 
-export default function App() {
-  const [products, setProducts] = React.useState([]);
-  const [cart, setCart] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
-  const [showPaymentPage, setShowPaymentPage] = React.useState(false); // State to toggle payment page
+const App = () => {
+  const [user, setUser] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [cart, setCart] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
+  const [showPaymentPage, setShowPaymentPage] = useState(false);
+  const [showAboutPage, setShowAboutPage] = useState(false);
+  const [showAuth, setShowAuth] = useState(false); // State for Auth visibility
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch("https://fakestoreapi.com/products")
       .then((response) => response.json())
       .then((data) => {
         setProducts(data);
         setLoading(false);
       });
+
+    const unsubscribe = mockAuth.onAuthStateChanged((user) => {
+      setUser(user);
+    });
+    return () => unsubscribe();
   }, []);
 
   const addToCart = (product) => {
@@ -40,36 +54,73 @@ export default function App() {
   );
 
   const handleProceedToCheckout = () => {
-    setShowPaymentPage(true); // Show payment page
+    setShowPaymentPage(true);
   };
 
   const handlePaymentSubmit = (e) => {
     e.preventDefault();
     alert("Payment Successful! Thank you for your purchase.");
-    setShowPaymentPage(false); // Hide payment page after submission
-    setCart([]); // Clear the cart
+    setShowPaymentPage(false);
+    setCart([]);
   };
 
   const handleGoBack = () => {
-    setShowPaymentPage(false); // Hide payment page and go back to main content
+    setShowPaymentPage(false);
   };
+
+  const filteredProducts = products
+    .filter((product) =>
+      product.title.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .filter((product) =>
+      selectedCategory === "All" ? true : product.category === selectedCategory
+    );
 
   return (
     <div>
       {/* Navbar */}
       <nav className="navbar">
         <h1 className="navbar-title">Homi E-Commerce Store</h1>
-        <div className="cart-icon">
-          <span role="img" aria-label="cart">
-            🛒
-          </span>
-          <span className="cart-count">{cart.length}</span>
-        </div>
+        {!showAuth && (
+          <div className="nav-buttons">
+            <button
+              className="nav-button"
+              onClick={() => setShowAboutPage(false)}
+            >
+              Home
+            </button>
+            <button
+              className="nav-button"
+              onClick={() => setShowAboutPage(true)}
+            >
+              About
+            </button>
+            {!user && (
+              <button className="nav-button" onClick={() => setShowAuth(true)}>
+                Login
+              </button>
+            )}
+          </div>
+        )}
+        {!showAuth && (
+          <div className="cart-icon">
+            <span role="img" aria-label="cart">
+              🛒
+            </span>
+            <span className="cart-count">{cart.length}</span>
+          </div>
+        )}
       </nav>
 
       {/* Main Content */}
       <div className="container">
-        {showPaymentPage ? (
+        {showAuth ? (
+          // Auth Component
+          <Auth setUser={setUser} setShowAuth={setShowAuth} />
+        ) : showAboutPage ? (
+          // About Page
+          <About />
+        ) : showPaymentPage ? (
           // Payment Page
           <div className="payment-page">
             <h1 className="payment-title">Payment Details</h1>
@@ -118,6 +169,8 @@ export default function App() {
           // Product Listing and Shopping Cart
           <>
             <h1 className="title">Welcome to Homi E-Commerce Store</h1>
+            <SearchBar onSearch={setSearchQuery} />
+            <CategoryFilters onSelectCategory={setSelectedCategory} />
             {loading ? (
               <div className="loading-spinner">
                 <div className="spinner"></div>
@@ -125,7 +178,7 @@ export default function App() {
             ) : (
               <>
                 <div className="product-list">
-                  {products.map((product) => (
+                  {filteredProducts.map((product) => (
                     <div key={product.id} className="product-card">
                       <div className="product-image-container">
                         <img
@@ -210,9 +263,11 @@ export default function App() {
             rel="noopener noreferrer"
           >
             Twitter
-      </a>*/}
+          </a>*/}
         </div>
       </footer>
     </div>
   );
-}
+};
+
+export default App;

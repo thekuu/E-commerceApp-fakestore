@@ -80,7 +80,7 @@ const App = () => {
     <div>
       {/* Navbar */}
       <nav className="navbar">
-        <h1 className="navbar-title">Homi E-Commerce Store</h1>
+        <h1 className="navbar-title">Masti E-Commerce Store</h1>
         {!showAuth && (
           <div className="nav-buttons">
             <button
@@ -168,7 +168,7 @@ const App = () => {
         ) : (
           // Product Listing and Shopping Cart
           <>
-            <h1 className="title">Welcome to Homi E-Commerce Store</h1>
+            <h1 className="title">Welcome to Masti E-Commerce Store</h1>
             <SearchBar onSearch={setSearchQuery} />
             <CategoryFilters onSelectCategory={setSelectedCategory} />
             {loading ? (
@@ -241,7 +241,7 @@ const App = () => {
 
       {/* Footer */}
       <footer className="footer">
-        <p>&copy; 2023 Homi E-Commerce Store. All rights reserved.</p>
+        <p>&copy; 2023 Masti E-Commerce Store. All rights reserved.</p>
         <div className="social-links">
           <a
             href="https://github.com/thekuu"

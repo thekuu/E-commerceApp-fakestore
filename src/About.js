@@ -5,7 +5,7 @@ const About = () => {
     <div className="about">
       <h1>About This Project</h1>
       <p>
-        Welcome to homi e-commerce app! This project is a demonstration of my
+        Welcome to Masti e-commerce app! This project is a demonstration of my
         skills in building modern web applications using <strong>React</strong>.
         While this is not a real e-commerce site, it showcases my ability to
         create a fully functional, responsive, and user-friendly web
